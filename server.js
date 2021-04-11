@@ -7,6 +7,12 @@ var api = express.Router();
 
 app.use(express.json());
 
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    next();
+})
+
 //Set path for API
 app.use('/api/v1', api);
 
