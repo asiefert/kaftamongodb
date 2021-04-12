@@ -9,15 +9,16 @@ const client = new MongoClient(url, { useUnifiedTopology: true });
 
 
 async function init() {
-    console.log(client.isConnected()); // false
+    // console.log(client.isConnected()); // false
     await client.connect();
-    console.log(client.isConnected()); // true
+    // console.log(client.isConnected()); // true
 }
 init();
 
 
 let dbName = 'quizDB';
 
+//GET all
 router.route('/').get(function (req, res) {
     const db = client.db(dbName);
     const collection = db.collection('quizzes');
@@ -28,7 +29,7 @@ router.route('/').get(function (req, res) {
         res.send(quizzes);
     });
 });
-
+//GET id
 router.route('/:id').get(function (req, res) {
     const db = client.db(dbName);
     const collection = db.collection('quizzes');
@@ -44,12 +45,14 @@ router.route('/:id').get(function (req, res) {
     )
 }
 );
+//POST new
 router.route('/').post(function (req, res) {
+    console.log(req.body);
     const db = client.db(dbName);
     const collection = db.collection('quizzes');
     collection.insertOne(req.body).then(result => {
         if (result) {
-            res.send(`${req.body.quiz_name} was added to the collection`);
+            res.send(result);
             console.log(`${req.body.quiz_name} was added to the collection`);
         } else {
             console.log("Could not add quiz to the collection");
@@ -57,13 +60,16 @@ router.route('/').post(function (req, res) {
     })
 });
 
+//TODO: Implement Update/PUT
+
+//Delete quiz
 router.route('/:id').delete(function (req, res) {
     const db = client.db(dbName);
     const collection = db.collection('quizzes');
     collection.deleteOne({ _id: ObjectID(req.params.id) }).then(result => {
         if (result) {
             console.log(`Item with id: ${req.params.id} deleted`);
-            res.send(`Item with id: ${req.params.id} deleted`);
+            res.send(result);
         } else {
             console.log("Could not remove quiz from the collection");
         }
