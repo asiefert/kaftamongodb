@@ -6,6 +6,7 @@ const { ObjectID } = require('bson');
 
 let url = "mongodb://localhost:27017/";
 const client = new MongoClient(url, { useUnifiedTopology: true });
+let dbName = 'quizDB';
 
 
 async function init() {
@@ -13,10 +14,24 @@ async function init() {
     await client.connect();
     // console.log(client.isConnected()); // true
 }
+
+function checkIfExists() {
+    const db = client.db(dbName);
+  db.listCollections({name: 'quizzes'})
+    .next(function(err,collinfo) {
+        if (collinfo) {
+            console.log('Quiz Collection Exists...');
+        }
+        else {
+            db.createCollection('quizzes');
+            console.log('Created quizzes collection...');
+        }
+    });
+}
 init();
+checkIfExists();
 
 
-let dbName = 'quizDB';
 
 //GET all
 router.route('/').get(function (req, res) {
